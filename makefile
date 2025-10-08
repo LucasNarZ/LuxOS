@@ -31,7 +31,7 @@ $(ISO_NAME): $(KERNEL_BIN)
 	mkdir -p $(GRUB_DIR)
 	cp $(KERNEL_BIN) $(ISO_DIR)/boot/
 	echo 'menuentry "Kernel" {\n\tmultiboot /boot/$(KERNEL_BIN)\n\tboot\n}' > $(GRUB_DIR)/grub.cfg
-	grub-mkrescue -o $@ $(ISO_DIR)
+	grub-mkrescue -o $@ $(ISO_DIR) --modules="normal multiboot multiboot2"
 
 run: $(ISO_NAME)
 	qemu-system-i386 -cdrom $(ISO_NAME) -serial mon:stdio
