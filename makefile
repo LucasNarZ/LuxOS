@@ -13,7 +13,7 @@ GRUB_DIR = $(ISO_DIR)/boot/grub
 all: $(ISO_NAME)
 
 kernel.o: $(KERNEL_DIR)/kernel.c
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) -m32 $(CFLAGS) $< -o $@
 
 gdt.o: $(KERNEL_DIR)/gdt/gdt.c
 	$(CC) $(CFLAGS) $< -o $@
@@ -21,13 +21,19 @@ gdt.o: $(KERNEL_DIR)/gdt/gdt.c
 utils.o: $(KERNEL_DIR)/utils/utils.c
 	$(CC) $(CFLAGS) $< -o $@
 
+idt.o: $(KERNEL_DIR)/idt/idt.c
+	$(CC) $(CFLAGS) $< -o $@
+
 boot.o: $(KERNEL_DIR)/boot.s
+	nasm -f elf32 $< -o $@
+
+idt_load.o: $(KERNEL_DIR)/idt/idt_load.s
 	nasm -f elf32 $< -o $@
 
 gdt_flush.o: $(KERNEL_DIR)/gdt/gdt_flush.s
 	nasm -f elf32 $< -o $@
 
-$(KERNEL_BIN): boot.o kernel.o gdt.o utils.o gdt_flush.o
+$(KERNEL_BIN): boot.o kernel.o gdt.o utils.o gdt_flush.o idt.o idt_load.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
 $(ISO_NAME): $(KERNEL_BIN)
