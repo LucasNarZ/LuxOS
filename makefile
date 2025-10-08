@@ -15,16 +15,19 @@ all: $(ISO_NAME)
 kernel.o: $(KERNEL_DIR)/kernel.c
 	$(CC) $(CFLAGS) $< -o $@
 
-gdt.o: $(KERNEL_DIR)/gdt.c
+gdt.o: $(KERNEL_DIR)/gdt/gdt.c
 	$(CC) $(CFLAGS) $< -o $@
 
-utils.o: $(KERNEL_DIR)/utils.c
+utils.o: $(KERNEL_DIR)/utils/utils.c
 	$(CC) $(CFLAGS) $< -o $@
 
 boot.o: $(KERNEL_DIR)/boot.s
 	nasm -f elf32 $< -o $@
 
-$(KERNEL_BIN): boot.o kernel.o gdt.o utils.o
+gdt_flush.o: $(KERNEL_DIR)/gdt/gdt_flush.s
+	nasm -f elf32 $< -o $@
+
+$(KERNEL_BIN): boot.o kernel.o gdt.o utils.o gdt_flush.o
 	$(LD) $(LDFLAGS) -o $@ $^
 
 $(ISO_NAME): $(KERNEL_BIN)
