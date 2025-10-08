@@ -6,6 +6,6 @@ void set_gdt_entry(int num, uint16_t base_low, uint8_t base_middle, uint8_t base
 }
 
 void init_gdt(){
-    const char* init_message = "Initializing GDT table...";
-    print_message(init_message, video_memory, &index);
+    print_message("Initializing GDT table...\n", video_memory, &index);
+
 }
